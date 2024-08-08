@@ -1377,6 +1377,12 @@ if (NOT onnxruntime_ENABLE_TRAINING_TORCH_INTEROP)
       "${TEST_SRC_DIR}/mlas/unittest/*.h"
       "${TEST_SRC_DIR}/mlas/unittest/*.cpp"
     )
+
+    # Remove test_sbgemm.cpp if BFLOAT16 is not enabled
+    if(NOT DEFINED ENABLE_BFLOAT16 OR NOT ENABLE_BFLOAT16)
+      list(REMOVE_ITEM onnxruntime_mlas_test_src "${TEST_SRC_DIR}/mlas/unittest/test_sbgemm.cpp")
+    endif()
+
     onnxruntime_add_executable(onnxruntime_mlas_test ${onnxruntime_mlas_test_src})
     if(MSVC)
       target_compile_options(onnxruntime_mlas_test PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:--compiler-options /wd26409>"
