@@ -21,7 +21,7 @@ Abstract:
 //
 // Define the prototypes of the NEON UMMLA routines written in assembly.
 //
-
+#ifdef ENABLE_I8MM
 extern "C" {
 
 size_t MLASCALL
@@ -48,6 +48,7 @@ MlasGemmU8X8KernelUmmlaAdd(const uint8_t* A,
                            const int32_t* ColumnSumVector,
                            const int32_t* ZeroPointB);
 }
+#endif // ENABLE_I8MM
 
 struct MLAS_GEMM_U8X8_KERNEL_UMMLA {
     typedef uint8_t PackedAType;
@@ -946,7 +947,7 @@ MlasGemmQuantKernel<MLAS_GEMM_U8X8_KERNEL_UMMLA>(const MLAS_GEMM_U8X8_KERNEL_UMM
                                                  bool ZeroMode)
 {
     size_t RowsHandled;
-
+#ifdef ENABLE_I8MM
     if (ZeroMode) {
         RowsHandled = MlasGemmU8X8KernelUmmlaZero(A, B, C, PackedCountK, CountM, CountN, ldc,
                                                   RowSumBuffer, ColumnSumBuffer, ZeroPointB);
@@ -954,10 +955,11 @@ MlasGemmQuantKernel<MLAS_GEMM_U8X8_KERNEL_UMMLA>(const MLAS_GEMM_U8X8_KERNEL_UMM
         RowsHandled = MlasGemmU8X8KernelUmmlaAdd(A, B, C, PackedCountK, CountM, CountN, ldc,
                                                  RowSumBuffer, ColumnSumBuffer, ZeroPointB);
     }
-
+#endif // ENABLE_I8MM
     return RowsHandled;
 }
 
+#ifdef ENABLE_I8MM
 const MLAS_GEMM_QUANT_DISPATCH MlasGemmU8X8DispatchUmmla = {
     MlasGemmQuantOperation<MLAS_GEMM_U8X8_KERNEL_UMMLA>,
     MlasGemmQuantPackedOperation<MLAS_GEMM_U8X8_KERNEL_UMMLA>,
@@ -965,3 +967,4 @@ const MLAS_GEMM_QUANT_DISPATCH MlasGemmU8X8DispatchUmmla = {
     MLAS_GEMM_U8X8_KERNEL_UMMLA::PackedK,
     MLAS_GEMM_U8X8_KERNEL_UMMLA::PackedStrides.K,
     8};
+#endif // ENABLE_I8MM
