@@ -1615,11 +1615,13 @@ MlasHalfGemmConvertPackB(
     );
 
 #if defined(__aarch64__) && defined(__linux__)
+#ifdef ENABLE_BFLOAT16
 /**
  * @brief Whether current CPU supports Bfloat16(bf16) acceleration.
  */
 bool MLASCALL
 MlasBf16AccelerationSupported();
+#endif
 
 /**
  * @brief Interface for bf16 gemm post processors.
@@ -1684,6 +1686,7 @@ struct MLAS_SBGEMM_DATA_PARAMS {
     bool BIsfp32 = false; /**< matrix B is fp32, needs to be converted to bf16*/
 };
 
+#ifdef ENABLE_BFLOAT16
 /**
  * @brief Bfloat16 precision Batched GEMM:  C = A * B + Bias
  *        Either B can be either fp32 or bf16
@@ -1701,7 +1704,9 @@ struct MLAS_SBGEMM_DATA_PARAMS {
  */
 void MLASCALL
 MlasSBGemmBatch(const size_t M, const size_t N, const size_t K, const size_t BatchN, const MLAS_SBGEMM_DATA_PARAMS* DataParams, MLAS_THREADPOOL* ThreadPool = nullptr);
+#endif
 
+#ifdef ENABLE_BFLOAT16
 /**
  * @brief For bfloat16 precision GEMM, returns size of the
  *        packing buffer needed for right hand side
@@ -1712,7 +1717,9 @@ MlasSBGemmBatch(const size_t M, const size_t N, const size_t K, const size_t Bat
  */
 size_t MLASCALL
 MlasSBGemmPackBSize(size_t N, size_t K);
+#endif
 
+#ifdef ENABLE_BFLOAT16
 /**
  * @brief For bfloat16 precision GEMM, convert the float matrix B
  *        to blfoat16 precision and pack it into a packing buffer
@@ -1725,6 +1732,7 @@ MlasSBGemmPackBSize(size_t N, size_t K);
  */
 void MLASCALL
 MlasSBGemmConvertPackB(size_t N, size_t K, const float* B, size_t ldb, void* PackedB);
+#endif
 #endif
 
 /**
