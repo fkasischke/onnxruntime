@@ -363,7 +363,11 @@ size_t
 #if defined(__aarch64__) && defined(__linux__)
 typedef size_t(MLASCALL MLAS_SBGEMM_FLOAT_KERNEL)(
     const float* A,
+#if ENABLE_BFLOAT16
     const bfloat16_t* B,
+#else
+    const void* B, // Use void* or another appropriate type
+#endif
     float* C,
     size_t CountK,
     size_t CountM,
