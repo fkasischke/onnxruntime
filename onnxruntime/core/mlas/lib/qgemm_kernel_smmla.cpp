@@ -21,7 +21,7 @@ Abstract:
 //
 // Define the prototypes of the NEON SMMLA routines written in assembly.
 //
-
+#ifdef ENABLE_I8MM
 extern "C" {
 
 size_t MLASCALL
@@ -48,6 +48,7 @@ MlasGemmS8S8KernelSmmlaAdd(const uint8_t* A,
                            const int32_t* ColumnSumVector,
                            const int32_t* ZeroPointB);
 }
+#endif // ENABLE_I8MM
 
 struct MLAS_GEMM_S8S8_KERNEL_SMMLA {
     typedef uint8_t PackedAType;
@@ -766,7 +767,6 @@ MlasGemmS8S8CopyPackBProcessSmmla(int8_t* D, int8x8_t BytesRow[8], int32x4_t Col
 
     ColumnSums[1] = vaddq_s32(ColumnSums[1], vcombine_s32(ColSums1L, ColSums1H));
 }
-
 template <>
 void
 MlasGemmQuantCopyPackB<MLAS_GEMM_S8S8_KERNEL_SMMLA>(MLAS_GEMM_S8S8_KERNEL_SMMLA::PackedBType* Dst,
@@ -943,7 +943,7 @@ MlasGemmQuantKernel<MLAS_GEMM_S8S8_KERNEL_SMMLA>(const MLAS_GEMM_S8S8_KERNEL_SMM
                                                  bool ZeroMode)
 {
     size_t RowsHandled;
-
+#ifdef ENABLE_I8MM
     if (ZeroMode) {
         RowsHandled = MlasGemmS8S8KernelSmmlaZero(A, B, C, PackedCountK, CountM, CountN, ldc,
                                                   RowSumBuffer, ColumnSumBuffer, ZeroPointB);
@@ -951,10 +951,11 @@ MlasGemmQuantKernel<MLAS_GEMM_S8S8_KERNEL_SMMLA>(const MLAS_GEMM_S8S8_KERNEL_SMM
         RowsHandled = MlasGemmS8S8KernelSmmlaAdd(A, B, C, PackedCountK, CountM, CountN, ldc,
                                                  RowSumBuffer, ColumnSumBuffer, ZeroPointB);
     }
-
+#endif // ENABLE_I8MM
     return RowsHandled;
 }
 
+#ifdef ENABLE_I8MM
 const MLAS_GEMM_QUANT_DISPATCH MlasGemmS8S8DispatchSmmla = {
     MlasGemmQuantOperation<MLAS_GEMM_S8S8_KERNEL_SMMLA>,
     MlasGemmQuantPackedOperation<MLAS_GEMM_S8S8_KERNEL_SMMLA>,
@@ -962,3 +963,4 @@ const MLAS_GEMM_QUANT_DISPATCH MlasGemmS8S8DispatchSmmla = {
     MLAS_GEMM_S8S8_KERNEL_SMMLA::PackedK,
     MLAS_GEMM_S8S8_KERNEL_SMMLA::PackedStrides.K,
     8};
+#endif // ENABLE_I8MM
