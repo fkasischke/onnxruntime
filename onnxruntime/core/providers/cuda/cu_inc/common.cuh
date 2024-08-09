@@ -545,11 +545,11 @@ struct IsInfTyped<Float8E5M2FNUZ> : ReturnFalse<Float8E5M2FNUZ> {};
 template <typename T, bool detect_positive, bool detect_negative>
 struct _IsInf {
   __device__ __inline__ bool operator()(T a) const {
-    if constexpr (detect_positive && detect_negative) {
+    if (detect_positive && detect_negative) {
       return isinf_details::IsInfTyped<T>::IsInf(a);
-    } else if constexpr (detect_positive) {
+    } else if (detect_positive) {
       return isinf_details::IsInfTyped<T>::IsInfPos(a);
-    } else if constexpr (detect_negative) {
+    } else if (detect_negative) {
       return isinf_details::IsInfTyped<T>::IsInfNeg(a);
     } else {
       return false;
