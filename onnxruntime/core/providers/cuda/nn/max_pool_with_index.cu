@@ -52,6 +52,8 @@ __global__ void MaxPoolWithIndexKernel(
     } else if constexpr (Layout == LAYOUT_NHWC) {
       return (((n_index * height + h_index) * width + w_index) * depth + d_index) * channels + c_index;
     }
+    // Ensure a value is returned for all code paths
+    return -1;
   };
 
   int d_index, w_index, h_index, c_index, n_index, id_tmp;
