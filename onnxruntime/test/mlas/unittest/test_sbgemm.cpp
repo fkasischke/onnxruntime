@@ -19,6 +19,7 @@ Abstract:
 
 #include "test_sbgemm.h"
 
+#ifdef ENABLE_BFLOAT16
 //
 // Short Execute() test helper to register each test seperately by all parameters.
 //
@@ -138,4 +139,6 @@ static UNUSED_VARIABLE bool added_to_main = AddTestRegister([](bool is_short_exe
   }
   return SBGemmRegistLongExecute() > 0;
 });
+#endif // ENABLE_BFLOAT16
+
 #endif  // defined(__aarch64__) && defined(__linux__)

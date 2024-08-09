@@ -21,6 +21,8 @@ Abstract:
 
 #include "test_util.h"
 
+#ifdef ENABLE_BFLOAT16
+
 template <typename T>
 void SmallFloatFill(T* start, size_t size) {
   constexpr float MinimumFillValue = -11.0f;
@@ -277,5 +279,5 @@ class MlasSBGemmTest : public MlasTestBase {
     }
   }
 };
-
+#endif // ENABLE_BFLOAT16
 #endif  // defined(__aarch64__) && defined(__linux__)
