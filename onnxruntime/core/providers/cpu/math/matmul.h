@@ -31,8 +31,10 @@ class MatMul<float> final : public OpKernel {
     trans_batch_b_ = trans_batch_b_attr != 0;
 
 #if defined(__aarch64__) && defined(__linux__)
+#ifdef ENABLE_BFLOAT16
     auto config_ops = info.GetConfigOptions().GetConfigEntry(kOrtSessionOptionsMlasGemmFastMathArm64Bfloat16);
     use_fastmath_mode_ = (config_ops == "1") && MlasBf16AccelerationSupported();
+#endif
 #endif
   }
 
