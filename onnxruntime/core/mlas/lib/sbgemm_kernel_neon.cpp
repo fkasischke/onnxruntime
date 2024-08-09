@@ -21,6 +21,8 @@ Abstract:
 #include "mlasi.h"
 #include "sbgemm.h"
 
+#ifdef ENABLE_BFLOAT16
+
 struct MLAS_SBGEMM_KERNEL_NEON {
     static constexpr bool PackNeeded = true;
     static constexpr size_t KernelMaxM = 8;  // max # rows the vectorized kernel can process
@@ -359,4 +361,6 @@ const MLAS_SBGEMM_DISPATCH MlasSBGemmDispatchNeon = {
     MLAS_SBGEMM_KERNEL_NEON::KernelMaxM,
     32  // kernel may read beyond buffer end by 32 bytes
 };
+#endif
+
 #endif  // defined(__aarch64__) && defined(__linux__)
